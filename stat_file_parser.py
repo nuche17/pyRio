@@ -1903,6 +1903,19 @@ class HudObj:
     
     def runner_on_third(self) -> bool:
         return bool(self.hud_json.get('Runner 3B'))
+    
+    def runner_on_base(self, baseNum: int) -> bool:
+        ErrorChecker.check_base_num(baseNum)
+        if baseNum == 0:
+            return bool(self.hud_json.get('Runner Batter'))
+        return bool(self.hud_json.get(f'Runner {baseNum}B'))
+    
+    def runner(self, baseNum: int):
+        ErrorChecker.check_base_num(baseNum)
+        if baseNum == 0:
+            return self.hud_json.get('Runner Batter', {})
+        else:
+            return self.hud_json.get(f'Runner {baseNum}B', {})
 
     def team_roster_str(self, teamNum: int, rosterNum: int):
         ErrorChecker.check_team_num(teamNum)
