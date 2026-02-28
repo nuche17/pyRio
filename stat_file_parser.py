@@ -1890,8 +1890,6 @@ class HudObj:
         ErrorChecker.check_team_num(teamNum)
         return self.hud_json[f'Team {teamNum} Logo']
     
-    #TODO: create logoName method that gives the actual name instead of the ID. Or make a lookup.
-    
     def score(self, teamNum: int) -> int:
         ErrorChecker.check_team_num(teamNum)
         team_string = "Away" if teamNum == 0 else "Home"
