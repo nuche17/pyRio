@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .lookup import LookupDicts
+from .lookup import LookupDicts, Lookup
 from datetime import datetime
 from typing import Optional, Union
 
@@ -204,7 +204,7 @@ class StatObj:
             rosterDict[x] = self.statJson["Character Game Stats"][self.getTeamString(teamNum, x)]["CharID"]
         return rosterDict
 
-    def characterName(self, teamNum: int, rosterNum: int = -1) -> Union[str, list[str]]:
+    def characterName(self, teamNum: int, rosterNum: int = -1, output_format: str = "name") -> Union[str | int, list[str] | list[int]]:
         # returns name of specified character
         # if no roster spot is provided, returns a list of characters on a given team
         # teamNum: 0 == home team, 1 == away team
@@ -214,10 +214,10 @@ class StatObj:
         if rosterNum == -1:
             charList = []
             for x in range(0, 9):
-                charList.append(self.statJson["Character Game Stats"][self.getTeamString(teamNum, x)]["CharID"])
+                charList.append(Lookup.get_character(self.statJson["Character Game Stats"][self.getTeamString(teamNum, x)]["CharID"], output_format=output_format))
             return charList
         else:
-            return self.statJson["Character Game Stats"][self.getTeamString(teamNum, rosterNum)]["CharID"]
+            return Lookup.get_character(self.statJson["Character Game Stats"][self.getTeamString(teamNum, rosterNum)]["CharID"], output_format=output_format)
 
     def isStarred(self, teamNum: int, rosterNum: int = -1) -> bool:
         # returns if a character is starred
@@ -233,13 +233,13 @@ class StatObj:
         else:
             return self.statJson["Character Game Stats"][self.getTeamString(teamNum, rosterNum)]["Superstar"] == 1
 
-    def captain(self, teamNum: int) -> str:
+    def captain(self, teamNum: int, output_format: str = "name") -> str | int:
         # returns name of character who is the captain
         teamNum = self.teamNumVersionCorrection(teamNum)
         captain = ""
         for character in self.characterGameStats():
             if character["Captain"] == 1 and int(character["Team"]) == teamNum:
-                captain = character["CharID"]
+                captain = Lookup.get_character(character["CharID"], output_format=output_format)
         return captain
 
     def offensiveStats(self, teamNum: int, rosterNum: int = -1) -> Union[dict, list[dict]]:
@@ -1937,13 +1937,13 @@ class HudObj:
         ErrorChecker.check_roster_num(rosterNum)
         return self.hud_json[self.team_roster_str(teamNum, rosterNum)]['Defensive Stats']
 
-    def roster(self, teamNum: int) -> dict:
+    def roster(self, teamNum: int, output_format: str = "name") -> dict:
         roster_dict = {}
         for i in range(9):
             player = self.hud_json[self.team_roster_str(teamNum, i)]
             roster_dict[i] = {}
             roster_dict[i]['captain'] = player['Captain']
-            roster_dict[i]['char_id'] = player['CharID']
+            roster_dict[i]['char_id'] = Lookup.get_character(player['CharID'], output_format=output_format)
 
         return roster_dict
     

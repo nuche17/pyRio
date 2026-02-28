@@ -103,6 +103,63 @@ class LookupDicts():
         53: "Bro(B)",
     }
 
+    CHAR_NAME_NO_VARIANT = {
+        0: "Mario",
+        1: "Luigi",
+        2: "DK",
+        3: "Diddy",
+        4: "Peach",
+        5: "Daisy",
+        6: "Yoshi",
+        7: "Baby Mario",
+        8: "Baby Luigi",
+        9: "Bowser",
+        10: "Wario",
+        11: "Waluigi",
+        12: "Koopa",
+        13: "Toad",
+        14: "Boo",
+        15: "Toadette",
+        16: "Shy Guy",
+        17: "Birdo",
+        18: "Monty",
+        19: "Bowser Jr",
+        20: "Paratroopa",
+        21: "Pianta",
+        22: "Pianta",
+        23: "Pianta",
+        24: "Noki",
+        25: "Noki",
+        26: "Noki",
+        27: "Bro",
+        28: "Toadsworth",
+        29: "Toad",
+        30: "Toad",
+        31: "Toad",
+        32: "Toad",
+        33: "Magikoopa",
+        34: "Magikoopa",
+        35: "Magikoopa",
+        36: "Magikoopa",
+        37: "King Boo",
+        38: "Petey",
+        39: "Dixie",
+        40: "Goomba",
+        41: "Paragoomba",
+        42: "Koopa",
+        43: "Paratroopa",
+        44: "Shy Guy",
+        45: "Shy Guy",
+        46: "Shy Guy",
+        47: "Shy Guy",
+        48: "Dry Bones",
+        49: "Dry Bones",
+        50: "Dry Bones",
+        51: "Dry Bones",
+        52: "Bro",
+        53: "Bro",
+    }
+
     STADIUM = {
         0: "Mario Stadium",
         1: "Bowser Castle",
@@ -345,6 +402,42 @@ class Lookup:
                 df[f'{column}_str'] = translated_values.astype('category')
 
         return df
+    
+    def get_character(self, search_term, output_format: str = "name"):
+    
+        # Look up a character and return their info in the specified format.
+
+        # Args:
+        #     search_term:   Character name (str) or ID (int)
+        #     output_format: One of "name", "nameNoVariant", "ID", "IDHex"
+
+        # Returns:
+        #     Character info in the requested format.
+        
+        # First, resolve to the "other side" if needed
+        # _lookup returns name if given ID, and ID if given name
+        result = self._lookup(LookupDicts.CHAR_NAME, search_term)
+
+        # Determine name and ID from the lookup result + original input
+        if isinstance(result, int):  # input was a name, result is ID
+            character_id = result
+            character_name = search_term
+        else:  # input was an ID, result is name
+            character_name = result
+            character_id = self._lookup(LookupDicts.CHAR_NAME, result)
+
+        match output_format:
+            case "name":
+                return character_name
+            case "nameNoVariant":
+                parts = character_name.split()
+                return self._lookup(LookupDicts.CHAR_NAME_NO_VARIANT, character_id)
+            case "ID":
+                return character_id
+            case "IDHex":
+                return hex(character_id)
+            case _:
+                raise ValueError(f"Invalid output_format '{output_format}'. Choose from: 'name', 'nameNoVariant', 'ID', 'IDHex'")
 
 # lookup_instance = Lookup()
 
