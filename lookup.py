@@ -403,7 +403,7 @@ class Lookup:
 
         return df
     
-    def get_character(self, search_term, output_format: str = "name"):
+    def get_character(self, search_term: str | int, output_format: str = "name"):
     
         # Look up a character and return their info in the specified format.
 
