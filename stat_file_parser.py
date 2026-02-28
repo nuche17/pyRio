@@ -40,6 +40,8 @@ Roster args:
 # rosterNum: optional (no arg == all characters on team), 0 -> 8 for each of the 9 roster spots
 '''
 
+lookup = Lookup()
+
 class ErrorChecker:
     @staticmethod
     def check_team_num(teamNum: int) -> None:
@@ -214,10 +216,10 @@ class StatObj:
         if rosterNum == -1:
             charList = []
             for x in range(0, 9):
-                charList.append(Lookup.get_character(self.statJson["Character Game Stats"][self.getTeamString(teamNum, x)]["CharID"], output_format=output_format))
+                charList.append(lookup.get_character(self.statJson["Character Game Stats"][self.getTeamString(teamNum, x)]["CharID"], output_format=output_format))
             return charList
         else:
-            return Lookup.get_character(self.statJson["Character Game Stats"][self.getTeamString(teamNum, rosterNum)]["CharID"], output_format=output_format)
+            return lookup.get_character(self.statJson["Character Game Stats"][self.getTeamString(teamNum, rosterNum)]["CharID"], output_format=output_format)
 
     def isStarred(self, teamNum: int, rosterNum: int = -1) -> bool:
         # returns if a character is starred
@@ -239,7 +241,7 @@ class StatObj:
         captain = ""
         for character in self.characterGameStats():
             if character["Captain"] == 1 and int(character["Team"]) == teamNum:
-                captain = Lookup.get_character(character["CharID"], output_format=output_format)
+                captain = lookup.get_character(character["CharID"], output_format=output_format)
         return captain
 
     def offensiveStats(self, teamNum: int, rosterNum: int = -1) -> Union[dict, list[dict]]:
@@ -1943,7 +1945,7 @@ class HudObj:
             player = self.hud_json[self.team_roster_str(teamNum, i)]
             roster_dict[i] = {}
             roster_dict[i]['captain'] = player['Captain']
-            roster_dict[i]['char_id'] = Lookup.get_character(player['CharID'], output_format=output_format)
+            roster_dict[i]['char_id'] = lookup.get_character(player['CharID'], output_format=output_format)
 
         return roster_dict
     
